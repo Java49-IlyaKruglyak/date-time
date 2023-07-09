@@ -38,11 +38,18 @@ class DateTimeTests {
 		//displayCurrentTime("Europe/London");
 		//TODO display current date & time in all time zones related to Canada
 		//Date / Time (HH:mm) / Time Zone name
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/YYYY / HH:mm / zzzz");
+		for(String zoneName: ZoneId.getAvailableZoneIds()) {
+			if (zoneName.contains("Canada")) {
+				displayCurrentTime(zoneName, dtf) ;
+			}
+		}
+		
 	}
-	void displayCurrentTime(String zoneName) {
-//		ZoneId.getAvailableZoneIds()
-//		.forEach(System.out::println);
-		System.out.println(ZonedDateTime.ofInstant(Instant.now(), ZoneId.of(zoneName)));
+	void displayCurrentTime(String zoneName, DateTimeFormatter dtf) {
+
+		System.out.println(ZonedDateTime.ofInstant(Instant.now(),
+				ZoneId.of(zoneName)).format(dtf));
 	}
 
 }
