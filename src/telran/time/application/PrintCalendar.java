@@ -7,17 +7,17 @@ import java.util.Arrays;
 import java.util.Locale;
 
 public class PrintCalendar {
-private static final int TITLE_OFFSET = 8;
-static DayOfWeek[] daysOfWeek = DayOfWeek.values();
-	public static void main(String[] args)  {
+	private static final int TITLE_OFFSET = 8;
+	static DayOfWeek[] daysOfWeek = DayOfWeek.values();
+
+	public static void main(String[] args) {
 		try {
 			RecordArguments recordArguments = getRecordArguments(args);
 			printCalendar(recordArguments);
-			
+
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
-		
 
 	}
 
@@ -25,7 +25,7 @@ static DayOfWeek[] daysOfWeek = DayOfWeek.values();
 		printTitle(recordArguments.month(), recordArguments.year());
 		printWeekDays();
 		printDays(recordArguments.month(), recordArguments.year());
-		
+
 	}
 
 	private static void printDays(int month, int year) {
@@ -33,25 +33,24 @@ static DayOfWeek[] daysOfWeek = DayOfWeek.values();
 		int currentWeekDay = getFirstWeekDay(month, year);
 		printOffset(currentWeekDay);
 		for (int day = 1; day <= nDays; day++) {
-			System.out.printf("%4d",day);
+			System.out.printf("%4d", day);
 			currentWeekDay++;
-			if(currentWeekDay == 7) {
+			if (currentWeekDay == 7) {
 				currentWeekDay = 0;
 				System.out.println();
 			}
-			
+
 		}
-		
+
 	}
 
 	private static void printOffset(int currentWeekDay) {
 		System.out.printf("%s", " ".repeat(4 * currentWeekDay));
-		
+
 	}
 
 	private static int getFirstWeekDay(int month, int year) {
-		int weekDayNumber = LocalDate.of(year, month, 1)
-				.get(ChronoField.DAY_OF_WEEK);
+		int weekDayNumber = LocalDate.of(year, month, 1).get(ChronoField.DAY_OF_WEEK);
 		return weekDayNumber - 1;
 	}
 
@@ -62,29 +61,37 @@ static DayOfWeek[] daysOfWeek = DayOfWeek.values();
 
 	private static void printWeekDays() {
 		System.out.print("  ");
-		Arrays.stream(daysOfWeek).forEach(dw ->
-		System.out.printf("%s ",
-				dw.getDisplayName(TextStyle.SHORT, Locale.getDefault())));
+		Arrays.stream(daysOfWeek)
+				.forEach(dw -> System.out.printf("%s  ", dw.getDisplayName(TextStyle.SHORT, Locale.getDefault())));
 		System.out.println();
-		
+
 	}
 
 	private static void printTitle(int monthNumber, int year) {
 		// <year>, <month name>
 		Month month = Month.of(monthNumber);
-		String monthName = month.getDisplayName(TextStyle.FULL_STANDALONE,
-				Locale.getDefault());
-		System.out.printf("%s%s, %d\n", " ".repeat(TITLE_OFFSET),monthName, year);
-		
+		String monthName = month.getDisplayName(TextStyle.FULL_STANDALONE, Locale.getDefault());
+		System.out.printf("%s%s, %d\n", " ".repeat(TITLE_OFFSET), monthName, year);
+
 	}
 
 	private static RecordArguments getRecordArguments(String[] args) throws Exception {
 		LocalDate ld = LocalDate.now();
-		int month = args.length == 0 ? ld.get(ChronoField.MONTH_OF_YEAR) :
-			getMonth(args[0]);
-		int year = args.length > 1 ? getYear(args[1]) :
-			ld.get(ChronoField.YEAR);
-		return new RecordArguments(month, year, null);
+		int month = args.length == 0 ? ld.get(ChronoField.MONTH_OF_YEAR) : getMonth(args[0]);
+		int year = args.length > 1 ? getYear(args[1]) : ld.get(ChronoField.YEAR);
+		DayOfWeek dayOfWeek = args.length > 2 ? getDay(args[2]) : DayOfWeek.MONDAY;
+		return new RecordArguments(month, year, dayOfWeek);
+	}
+
+	private static DayOfWeek getDay(String day) throws Exception {
+		try {
+			return DayOfWeek.valueOf(day.toUpperCase());
+
+		} catch (IllegalArgumentException e) {
+			System.out.println("day must be one of week days in range monday till sunday");
+		}
+		return DayOfWeek.MONDAY;
+
 	}
 
 	private static int getYear(String yearStr) throws Exception {
@@ -92,14 +99,14 @@ static DayOfWeek[] daysOfWeek = DayOfWeek.values();
 		int year = 0;
 		try {
 			year = Integer.parseInt(yearStr);
-			if(year < 0) {
+			if (year < 0) {
 				message = "year must be a positive number";
 			}
-			
+
 		} catch (NumberFormatException e) {
 			message = "year must be a number";
 		}
-		if(!message.isEmpty()) {
+		if (!message.isEmpty()) {
 			throw new Exception(message);
 		}
 		return year;
@@ -110,14 +117,14 @@ static DayOfWeek[] daysOfWeek = DayOfWeek.values();
 		int month = 0;
 		try {
 			month = Integer.parseInt(monthStr);
-			if(month < 1 || month > 12) {
+			if (month < 1 || month > 12) {
 				message = "month must be in the range [1-12]";
 			}
-			
+
 		} catch (NumberFormatException e) {
 			message = "month must be a number";
 		}
-		if(!message.isEmpty()) {
+		if (!message.isEmpty()) {
 			throw new Exception(message);
 		}
 		return month;
