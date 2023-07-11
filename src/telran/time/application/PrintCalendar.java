@@ -1,5 +1,5 @@
 package telran.time.application;
-
+import java.util.ArrayList;
 import java.time.*;
 import java.time.format.TextStyle;
 import java.time.temporal.ChronoField;
@@ -13,6 +13,7 @@ public class PrintCalendar {
 	public static void main(String[] args) {
 		try {
 			RecordArguments recordArguments = getRecordArguments(args);
+			firstDayShifter(recordArguments.firstWeekDay());
 			printCalendar(recordArguments);
 
 		} catch (Exception e) {
@@ -83,7 +84,7 @@ public class PrintCalendar {
 		return new RecordArguments(month, year, dayOfWeek);
 	}
 
-	private static DayOfWeek getDay(String day) throws Exception {
+	private static DayOfWeek getDay(String day) {
 		try {
 			return DayOfWeek.valueOf(day.toUpperCase());
 
@@ -128,6 +129,18 @@ public class PrintCalendar {
 			throw new Exception(message);
 		}
 		return month;
+	}
+	
+	private static void firstDayShifter(DayOfWeek firstWeekDay) {
+		ArrayList<DayOfWeek> shiftedDays = new ArrayList<>();
+		int index = firstWeekDay.getValue() - 1;
+		for(DayOfWeek day: daysOfWeek) {
+			if(index == daysOfWeek.length) {
+				index = 0;
+			}
+			shiftedDays.add(daysOfWeek[index++]);
+		}
+		shiftedDays.toArray(daysOfWeek);
 	}
 
 }
